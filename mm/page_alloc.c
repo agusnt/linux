@@ -1799,14 +1799,31 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
 	unsigned int current_order;
 	struct free_area *area;
 	struct page *page;
+	struct list_head *head;
 
 	/* Find a page of the appropriate size in the preferred list */
 	for (current_order = order; current_order < MAX_ORDER; ++current_order) {
 		area = &(zone->free_area[current_order]);
-		page = list_first_entry_or_null(&area->free_list[migratetype],
-							struct page, lru);
+		head = &area->free_list[migratetype];
+
+        /* 
+         * This code is modifed in order to only get pages with a determinated
+         * address
+         */
+		for(;;){
+			page = list_first_entry_or_null(head, struct page, lru);
+
+            // If the page is null or not multiple of 4
+			if(!page || (page_to_phys(page) % 4 == 0)) break;
+			
+			head = (head->next);
+		}
 		if (!page)
 			continue;
+        
+        // For debuging efforts: print the page physical address
+		printk("ALLOC MEM: %lld\n", page_to_phys(page));
+
 		list_del(&page->lru);
 		rmv_page_order(page);
 		area->nr_free--;
