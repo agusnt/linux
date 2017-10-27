@@ -179,6 +179,23 @@ out:
 	return error;
 }
 
+extern unsigned int __limit__;
+// Own SYSCALL_DEFINE in order to limit the memory 
+SYSCALL_DEFINE1(limit_memory, unsigned int, num)
+{
+    /*
+     * These call system does not control parameter or other stuff, only very
+     * basic thins, so be careful about what you do.
+     */
+   
+    if (num % 2 != 0) return -EFAULT;
+    __limit__ = num;
+
+    printk(KERN_INFO "SYSCALL: Memory limit change to %u\n", __limit__);
+
+    return 0;
+}
+
 SYSCALL_DEFINE3(setpriority, int, which, int, who, int, niceval)
 {
 	struct task_struct *g, *p;

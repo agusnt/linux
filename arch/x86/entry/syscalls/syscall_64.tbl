@@ -380,3 +380,6 @@
 545	x32	execveat		compat_sys_execveat/ptregs
 546	x32	preadv2			compat_sys_preadv64v2
 547	x32	pwritev2		compat_sys_pwritev64v2
+
+# Own systemcall in order to limit virtual memory
+548	common	limit_memory		sys_limit_memory
