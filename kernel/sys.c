@@ -68,6 +68,8 @@
 #include <asm/io.h>
 #include <asm/unistd.h>
 
+#include "../mm/internal_mem.h"
+
 #ifndef SET_UNALIGN_CTL
 # define SET_UNALIGN_CTL(a, b)	(-EINVAL)
 #endif
@@ -179,7 +181,6 @@ out:
 	return error;
 }
 
-extern unsigned int __limit__;
 // Own SYSCALL_DEFINE in order to limit the memory 
 SYSCALL_DEFINE1(limit_memory, unsigned int, num)
 {
@@ -188,10 +189,10 @@ SYSCALL_DEFINE1(limit_memory, unsigned int, num)
      * basic thins, so be careful about what you do.
      */
    
-    if (num % 2 != 0) return -EFAULT;
-    __limit__ = num;
+    if (num % 2 != 0 && num != 1) return -EFAULT;
+    __limit__memory__ = num;
 
-    printk(KERN_INFO "SYSCALL: Memory limit change to %u\n", __limit__);
+    printk(KERN_INFO "SYSCALL: Memory limit change to %u\n", __limit__memory__);
 
     return 0;
 }

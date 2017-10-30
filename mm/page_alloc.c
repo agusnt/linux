@@ -74,6 +74,8 @@
 #include <asm/div64.h>
 #include "internal.h"
 
+#include "internal_mem.h"
+
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
 #define MIN_PERCPU_PAGELIST_FRACTION	(8)
@@ -1792,8 +1794,7 @@ static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags
  * Go through the free lists for the given migratetype and remove
  * the smallest available page from the freelists
  */
-// Variable to limit the page address
-unsigned int __limit__ = 1;
+unsigned int __limit__memory__ = 1;
 static inline
 struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
 						int migratetype)
@@ -1812,13 +1813,13 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
          * This code is modifed in order to only get pages with a determinated
          * address
          */
-		for(;;){
-			page = list_first_entry_or_null(head, struct page, lru);
+		while(!page || (page_to_phys(page) % __limit__memory__ != 0)){
+			    page = list_first_entry_or_null(head, struct page, lru);
 
-            // If the page is null or not multiple of 4
-			if(!page || (page_to_phys(page) % __limit__ == 0)) break;
-			
-			head = (head->next);
+                // If the page is null or not multiple of 4
+			    //if(!page || (page_to_phys(page) % __limit__ == 0)) break;
+			    
+			    head = (head->next);
 		}
 		if (!page)
 			continue;
