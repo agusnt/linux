@@ -1802,28 +1802,29 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
 	unsigned int current_order;
 	struct free_area *area;
 	struct page *page;
-	struct list_head *head;
+	struct list_head *next;
+    struct list_head *aux_list;
 
 	/* Find a page of the appropriate size in the preferred list */
 	for (current_order = order; current_order < MAX_ORDER; ++current_order) {
 		area = &(zone->free_area[current_order]);
-		head = &area->free_list[migratetype];
 
+        //page = list_first_entry_or_null(&area->free_list[migratetype], struct page, lru);
         /* 
          * This code is modifed in order to only get pages with a determinated
          * address
          */
-		while(!page || (page_to_phys(page) % __limit__memory__ != 0)){
-			    page = list_first_entry_or_null(head, struct page, lru);
+        list_for_each_safe(next, aux_list, &area->free_list[migratetype])
+        {
+                page = container_of(next, struct page, lru);
 
                 // If the page is null or not multiple of 4
-			    //if(!page || (page_to_phys(page) % __limit__ == 0)) break;
-			    
-			    head = (head->next);
-		}
-		if (!page)
-			continue;
-        
+			    if(page && (page_to_phys(page) % __limit__memory__ == 0)) break;
+                else page = NULL;
+        }
+
+		if (!page) continue;
+
         // For debuging efforts: print the page physical address
 		printk("ALLOC MEM: %lld\n", page_to_phys(page));
 
