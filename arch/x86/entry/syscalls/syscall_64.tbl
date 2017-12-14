@@ -383,3 +383,4 @@
 
 # Own systemcall in order to limit virtual memory
 548	common	limit_memory		sys_limit_memory
+549	common	get_limit_memory		sys_get_limit_memory

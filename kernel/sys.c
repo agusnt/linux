@@ -197,6 +197,17 @@ SYSCALL_DEFINE1(limit_memory, unsigned int, num)
     return 0;
 }
 
+// Own SYSCALL_DEFINE in order to limit the memory 
+SYSCALL_DEFINE1(get_limit_memory, unsigned int, num)
+{
+    /*
+     * These call system does not control parameter or other stuff, only very
+     * basic thins, so be careful about what you do.
+     */
+   
+    return __limit__memory__;
+}
+
 SYSCALL_DEFINE3(setpriority, int, which, int, who, int, niceval)
 {
 	struct task_struct *g, *p;
