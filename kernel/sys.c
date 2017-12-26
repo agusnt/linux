@@ -191,7 +191,7 @@ SYSCALL_DEFINE1(limit_memory, unsigned int, num)
    
     __limit__memory__ = num;
 
-    printk(KERN_INFO "SYSCALL: Memory limit change to %u\n", __limit__memory__);
+    printk(KERN_INFO "SYSCALL: Memory limit change to %lu\n", __limit__memory__);
 
     return 0;
 }
