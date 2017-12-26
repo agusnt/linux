@@ -1794,7 +1794,7 @@ static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags
  * Go through the free lists for the given migratetype and remove
  * the smallest available page from the freelists
  */
-unsigned int __limit__memory__ = 1;
+unsigned long __limit__memory__ = 0;
 static inline
 struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
 						int migratetype)
@@ -1819,7 +1819,7 @@ struct page *__rmqueue_smallest(struct zone *zone, unsigned int order,
                 page = container_of(next, struct page, lru);
 
                 // If the page is null or not multiple of 4
-			    if(page && (page_to_phys(page) % __limit__memory__ == 0)) break;
+			    if(page && (page_to_phys(page) & __limit__memory__ == 0)) break;
                 else page = NULL;
         }
 

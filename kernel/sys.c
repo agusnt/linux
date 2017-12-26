@@ -189,7 +189,6 @@ SYSCALL_DEFINE1(limit_memory, unsigned int, num)
      * basic thins, so be careful about what you do.
      */
    
-    if (num % 2 != 0 && num != 1) return -EFAULT;
     __limit__memory__ = num;
 
     printk(KERN_INFO "SYSCALL: Memory limit change to %u\n", __limit__memory__);
